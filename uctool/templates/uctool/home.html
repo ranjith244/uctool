@@ -1,0 +1,1231 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://cdn.zingchart.com/zingchart.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  <script src={% static "js/home.js" %}></script>
+  <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+  <script src='https://cdn.plot.ly/plotly-2.3.0.min.js'></script>
+
+
+
+
+  <style>
+    #myChart {
+      height: 100%;
+      width: 100%;
+    }
+
+    .chart--container {
+      width: 66%;
+      height: 250px;
+      /* position: relative; */
+      /* top:-0px !important; */
+    }
+
+    .chWrap {
+      white-space: nowrap;
+      position: relative;
+      top: -60px !important;
+      height: 100%;
+      width: 100%;
+    }
+
+    .navigation {
+      background-color: #e3f2fd;
+      height: 50px !important;
+      margin-bottom: 0px;
+    }
+
+    .main-header {
+      background-color: #0070AD;
+      padding-left: 2px;
+      padding-top: 32.2px;
+      padding-bottom: 32.2px;
+      padding-right: 12px;
+      cursor: pointer;
+    }
+
+    .sub-header {
+      background-color: #EFF3F6;
+      padding-left: 12px;
+      height: 120px;
+      border-bottom: 1px solid #D9E3EA;
+      padding-right: 12px;
+      cursor: pointer;
+    }
+
+    .main-label {
+      width: 50px;
+      height: 23px;
+      background-color: #12abdb;
+      border-radius: 3px;
+      padding-left: 7px;
+      padding-top: 2px;
+      color: white;
+      float: right;
+    }
+
+    .sub-label {
+      width: 23px;
+      height: 23px;
+      background-color: #D9E3EA;
+      border-radius: 3px;
+      padding-left: 7px;
+      padding-top: 2px;
+      color: #979797;
+      float: right;
+    }
+
+    .heading {
+      margin-top: 0px !important;
+      margin-bottom: 0px !important;
+      padding-top: 12px;
+    }
+
+    /*QuickReset*/
+    * {
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      font: 14px/1.4 sans-serif;
+      cursor: pointer;
+    }
+
+    input,
+    textarea {
+      font: 14px/1.4 sans-serif;
+    }
+
+    .input-group {
+      display: table;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    .input-group>div {
+      display: table-cell;
+      border: 1px solid #ddd;
+      vertical-align: middle;
+      /* needed for Safari */
+    }
+
+    .input-group-icon {
+      background: #eee;
+      color: #777;
+      padding: 0 12px
+    }
+
+    .input-group-area {
+      width: 100%;
+    }
+
+    .input-group input {
+      border: 0;
+      display: block;
+      width: 100%;
+      padding: 8px;
+    }
+  </style>
+</head>
+
+<body data-ng-app="myApp" data-ng-controller="myCtrl">
+
+  <nav class="navbar navbar-light navigation">
+    <h3 class="text-center heading"><b>INTEGRATED UC MATURITY TOOL</b></h3>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      {% verbatim %}
+      <!-- Main Menu -->
+      <div class="col-md-1" style="width:14%;">
+        <div class="row main-header text-center" style="border-top: 0px solid #D9E3EA !important;">
+          <b style="color:white;">+ Create New Case</b>
+        </div>
+        <div class="row main-header" ng-click="showMenu('Data Sources')">
+          <b style="color:white;">
+            <img src="https://img.icons8.com/nolan/64/serial-tasks.png"/ style="height:20px;width:20px;">
+            Data Sources</b>
+          <div class="main-label">
+            <b>{{vtotal}}/21</b>
+          </div>
+        </div>
+        <div class="row main-header" ng-click="showMenu('Type of Data')">
+          <b style="color:white;">
+            <img src="https://img.icons8.com/nolan/64/serial-tasks.png"/ style="height:20px;width:20px;">
+            Type of Data</b>
+          <div class="main-label">
+            <b style="padding-left:8px;">{{datatotal}}/7</b>
+          </div>
+        </div>
+        <div class="row main-header" ng-click="showMenu('Volume of Data')">
+          <b style="color:white;">
+            <img src="https://img.icons8.com/nolan/64/serial-tasks.png"/ style="height:20px;width:20px;">
+            Volume of Data</b>
+          <div class="main-label">
+            <b>{{voltotal}}/21</b>
+          </div>
+        </div>
+        <div class="row main-header" ng-click="showMenu('Solution')">
+          <b style="color:white;">
+            <img src="https://img.icons8.com/nolan/64/serial-tasks.png"/ style="height:20px;width:20px;">
+            Solution Depth</b>
+          <div class="main-label">
+            <b style="padding-left:8px;">{{stotal}}/7</b>
+          </div>
+        </div>
+        <div class="row main-header" ng-click="showMenu('Pre-processing Requests')">
+          <b style="color:white;">
+            <img src="https://img.icons8.com/nolan/64/serial-tasks.png"/ style="height:20px;width:20px;">
+            Pre-processing Requests</b>
+          <div class="main-label">
+            <b style="padding-left:8px;">{{ptotal}}/7</b>
+          </div>
+        </div>
+        <div class="row main-header" ng-click="showMenu('Algorithm Type')">
+          <b style="color:white;">
+            <img src="https://img.icons8.com/nolan/64/serial-tasks.png"/ style="height:20px;width:20px;">
+            Algorithm Type</b>
+          <div class="main-label">
+            <b style="padding-left:8px;">{{atotal}}/7</b>
+          </div>
+        </div>
+        <div class="row main-header" ng-click="showMenu('Deployment')">
+          <b style="color:white;">
+            <img src="https://img.icons8.com/nolan/64/serial-tasks.png"/ style="height:20px;width:20px;">
+            Deployment</b>
+          <div class="main-label">
+            <b>{{dtotal}}/14</b>
+          </div>
+        </div>
+        <div class="row main-header" ng-click="showMenu('Monitoring')">
+          <b style="color:white;">
+            <img src="https://img.icons8.com/nolan/64/serial-tasks.png"/ style="height:20px;width:20px;">
+            Monitoring</b>
+          <div class="main-label">
+            <b>{{mtotal}}/14</b>
+          </div>
+        </div>
+        <div class="row main-header" ng-click="showMenu('Rendition')">
+          <b style="color:white;">
+            <img src="https://img.icons8.com/nolan/64/serial-tasks.png"/ style="height:20px;width:20px;">
+            Rendition</b>
+          <div class="main-label">
+            <b style="padding-left:8px;">{{rtotal}}/7</b>
+          </div>
+        </div>
+      </div>
+      <!-- Main Menu Ends -->
+
+
+      <!-- Sub Menu -->
+      <div class="col-md-2" style="height:870px;background-color: #EFF3F6;">
+        <div ng-if="dataSource || input" class="row sub-header" style="padding-top:15px;" ng-click="showMenu('dataSource')">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="sub-label">
+                <b>{{equiv}}</b>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#696969;font-size:16px;">Input Files</b>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#979797;font-size:12px;">{{equivTxt}}</b>
+            </div>
+          </div>
+        </div>
+        <div class="row" ng-if="input" id="input" style="background:white;">
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;"><b>Select Option <img src="https://img.icons8.com/material-rounded/24/000000/sort-down.png"/ style="float:right;padding-right:10px;"></b></div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getEquiv('1')">1</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getEquiv('2 or 3')">2 or 3</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getEquiv('3 to 5')">3 to 5</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getEquiv('5+')">5+</div>
+        </div>
+        <div ng-if="dataSource || input || warehousemenu" class="row sub-header" style="padding-top:15px;" ng-click="showMenu1('warehouse')">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="sub-label">
+                <b>{{wequiv}}</b>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#696969;font-size:16px;">Data Warehouses</b>
+              <img src="https://img.icons8.com/material-sharp/24/000000/sort-down.png"/ style="float:right;height:22px;width:22px;">
+
+            </div>
+
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#979797;font-size:12px;">{{wequivTxt}}</b>
+            </div>
+          </div>
+        </div>
+        <div class="row" ng-if="warehousemenu" id="warehouse" style="background:white;">
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;"><b>Select Option </b></div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getwEquiv('None')">None</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getwEquiv('Single')">Single</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getwEquiv('Multiple connected')">Multiple connected</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getwEquiv('Multiple disparate')">Multiple disparate</div>
+        </div>
+        <div ng-if="dataSource || input || bdlmenu" class="row sub-header" style="padding-top:15px;" ng-click="showMenu2('bdl')">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="sub-label">
+                <b>{{bequiv}}</b>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#696969;font-size:16px;">BDL / Cloud</b>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#979797;font-size:12px;">{{bequivTxt}}</b>
+            </div>
+          </div>
+        </div>
+        <div class="row" ng-if="bdlmenu" id="sec" style="background:white;">
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;"><b>Select Option <img src="https://img.icons8.com/material-rounded/24/000000/sort-down.png"/ style="float:right;padding-right:10px;"></b></div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getbEquiv('None')">None</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getbEquiv('Data')">Data Lake</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getbEquiv('BDL')">On-Prem BDL + integrated apps</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getbEquiv('Cloud')">Cloud integration</div>
+        </div>
+
+
+        <!-- 2nd starts -->
+        <div ng-if="dataType || dataDrop" class="row sub-header" style="padding-top:15px;" ng-click="showDataMenu('dataType')">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="sub-label">
+                <b>{{dequiv}}</b>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#696969;font-size:16px;">Type of Data</b>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#979797;font-size:12px;">{{dequivTxt}}</b>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" ng-if="dataDrop" id="dataDropid" style="background:white;">
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;"><b>Select Option <img src="https://img.icons8.com/material-rounded/24/000000/sort-down.png"/ style="float:right;padding-right:10px;"></b></div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getdEquiv('Structured')">Structured</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getdEquiv('Unstructured')">Unstructured</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getdEquiv('Combined')">Combined</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getdEquiv('Combined and integrated')">Combined and integrated</div>
+        </div>
+        <!-- 2nd ends -->
+
+        <!-- 3rd starts -->
+        <div ng-if="volume || volDrop" class="row sub-header" style="padding-top:15px;" ng-click="showObsMenu('volume')">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="sub-label">
+                <b>{{vequiv}}</b>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#696969;font-size:16px;">Observations or Rows</b>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#979797;font-size:12px;">{{vequivTxt}}</b>
+            </div>
+          </div>
+        </div>
+        <div class="row" ng-if="volDrop" id="volDropid" style="background:white;">
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;"><b>Select Option <img src="https://img.icons8.com/material-rounded/24/000000/sort-down.png"/ style="float:right;padding-right:10px;"></b></div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getvEquiv('60')">Between 60 and 1000</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getvEquiv('1000')">Between 1000 and 10000</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getvEquiv('10000')">Between 10000 and 100000</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getvEquiv('Big')">Big Data</div>
+        </div>
+
+        <div ng-if="volume || volDrop || featDrop" class="row sub-header" style="padding-top:15px;" ng-click="showFsMenu('feature')">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="sub-label">
+                <b>{{fequiv}}</b>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#696969;font-size:16px;">Variables, Features or Columns</b>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#979797;font-size:12px;">{{fequivTxt}}</b>
+            </div>
+          </div>
+        </div>
+        <div class="row" ng-if="featDrop" id="featDropId" style="background:white;">
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;"><b>Select Option <img src="https://img.icons8.com/material-rounded/24/000000/sort-down.png"/ style="float:right;padding-right:10px;"></b></div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getfEquiv('2')">Between 2 and 10</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getfEquiv('10')">Between 10 and 50</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getfEquiv('50')">Between 50 and 1000</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getfEquiv('More')">More than 2000</div>
+        </div>
+
+        <div ng-if="volume || volDrop || rowDrop" class="row sub-header" style="padding-top:15px;" ng-click="showRsMenu('row')">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="sub-label">
+                <b>{{requiv}}</b>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#696969;font-size:16px;">Rows : Columns Ratio</b>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#979797;font-size:12px;">{{requivTxt}}</b>
+            </div>
+          </div>
+        </div>
+        <div class="row" ng-if="rowDrop" id="rowDropId" style="background:white;">
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;"><b>Select Option <img src="https://img.icons8.com/material-rounded/24/000000/sort-down.png"/ style="float:right;padding-right:10px;"></b></div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getRsEquiv('50')">More than 50:1</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getRsEquiv('20')">More than 20:1</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getRsEquiv('Less20')">Less than 20:1</div>
+          <div style="padding-top:20px !important;padding-bottom:20px !important;padding-left:10px;" ng-click="getRsEquiv('Either')">Either</div>
+        </div>
+        <!-- 3rd ends -->
+
+
+        <!-- 4th starts -->
+        <div ng-if="solution" class="row sub-header" style="padding-top:15px;">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="sub-label">
+                <b>7</b>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#696969;font-size:16px;">Solution Depth</b>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#979797;font-size:12px;">Complex solution comprising many models/algorithms
+              </b>
+            </div>
+          </div>
+        </div>
+        <!-- 4th ends -->
+
+        <!-- 5th starts -->
+        <div ng-if="processing" class="row sub-header" style="padding-top:15px;">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="sub-label">
+                <b>7</b>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#696969;font-size:16px;">Pre-process Reqts</b>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#979797;font-size:12px;">Real time ingestion, Stream Processing, Data cleanup, Automated Transformations
+              </b>
+            </div>
+          </div>
+        </div>
+        <!-- 5th ends -->
+
+        <!-- 6th starts -->
+        <div ng-if="algorithm" class="row sub-header" style="padding-top:15px;">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="sub-label">
+                <b>7</b>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#696969;font-size:16px;">Algorithm Type </b>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#979797;font-size:12px;">Deep learning, Reinforcement learning, Computer Vision, NLG, Other Adv
+              </b>
+            </div>
+          </div>
+        </div>
+        <!-- 6th ends -->
+
+
+        <!-- 7th starts -->
+        <div ng-if="deploy" class="row sub-header" style="padding-top:15px;">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="sub-label">
+                <b>7</b>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#696969;font-size:16px;">Deployment</b>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#979797;font-size:12px;">To be standardized
+              </b>
+            </div>
+          </div>
+        </div>
+        <div ng-if="deploy" class="row sub-header" style="padding-top:15px;">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="sub-label">
+                <b>7</b>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#696969;font-size:16px;">Tracking Schedule</b>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#979797;font-size:12px;">On-demand Hyperparameter and Model reassessments
+              </b>
+            </div>
+          </div>
+        </div>
+        <!-- 7th ends -->
+
+
+        <!-- 8th starts -->
+        <div ng-if="monitoring" class="row sub-header" style="padding-top:15px;">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="sub-label">
+                <b>7</b>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#696969;font-size:16px;">No of Metrics to be monitored</b>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#979797;font-size:12px;">Ensemble tracking (Best selection)
+              </b>
+            </div>
+          </div>
+        </div>
+        <div ng-if="monitoring" class="row sub-header" style="padding-top:15px;">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="sub-label">
+                <b>7</b>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#696969;font-size:16px;">Frequency</b>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#979797;font-size:12px;">Continous Real-time Tracking
+              </b>
+            </div>
+          </div>
+        </div>
+        <!-- 8th ends -->
+
+
+        <!-- 9th starts -->
+        <div ng-if="rendition" class="row sub-header" style="padding-top:15px;">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="sub-label">
+                <b>7</b>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#696969;font-size:16px;">Rendition</b>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px;">
+            <div class="col-md-12">
+              <b style="color:#979797;font-size:12px;">Model + Interpretation + Visualization
+              </b>
+            </div>
+          </div>
+        </div>
+        <!-- 9th ends -->
+      </div>
+
+
+      <!-- Sub Menu Ends -->
+
+      <!-- AI Maturity -->
+      <div class="col-md-8" style="margin-top:10px;">
+
+        <!-- 3 tabs starts -->
+        <ul class="nav nav-tabs">
+          <li ng-click="getForms('ou')" class="active"><a data-toggle="tab" href="#home"><b style="font-size:16px;color:black !important;">Stakeholders</b>
+              <img src="https://img.icons8.com/material-rounded/24/26e07f/checked--v1.png"/ style="height:20px;width:20px;">
+            </a>
+          </li>
+          <li ng-click="getForms('fs')"><a data-toggle="tab" href="#menu1"><b style="font-size:16px;color:black !important;">Feasibility</b>
+              <img src="https://img.icons8.com/material-rounded/24/26e07f/checked--v1.png"/ style="height:20px;width:20px;">
+            </a></li>
+          <li ng-click="getForms('bs')"><a data-toggle="tab" href="#menu2"><b style="font-size:16px;color:black !important;">Business Returns</b>
+              <img src="https://img.icons8.com/material-rounded/24/26e07f/checked--v1.png"/ style="height:20px;width:20px;">
+            </a></li>
+        </ul>
+        <!-- 3 tabs ends -->
+
+        <!-- stakeholder starts -->
+        <div class="tab-content">
+          <div id="home" class="tab-pane fade in active">
+            <div class="row" ng-if="ou || st">
+              <div class="col-md-2" style="width:180px !important;" ng-click="getForms('ou')">
+                <h4 style="background:{{ou ? '#0070AD':'#DCDCDC'}};height:40px;width:160px;padding-top:12px;padding-left:10px;border-radius:5px;color:{{ou ? 'white':'black'}}">Originator Unit
+                  <img src="https://img.icons8.com/fluency/48/000000/checked-checkbox.png"/ style="height:20px;width:20px;">
+                </h4>
+              </div>
+              <div class="col-md-3">
+                <h4 ng-click="getForms('st')" style="background:{{st ? '#0070AD':'#DCDCDC'}};height:40px;width:255px;padding-top:12px;padding-left:10px;border-radius:5px;color:{{st ? 'white':'black'}}">Sponsor / Key Stakeholder <img
+                    src="https://img.icons8.com/fluency/48/000000/checked-checkbox.png"/ style="height:20px;width:20px;"></h4>
+              </div>
+              <div class="col-md-1" style="float:right;margin-top:10px;">
+                <button type="button" class="btn btn-success" ng-click="save()">Save</button>
+              </div>
+              <div class="col-md-1" style="float:right;margin-top:10px;">
+                <button type="button" class="btn btn-default" ng-click="clearAll()">Reset</button>
+              </div>
+            </div>
+          </div>
+
+          <div ng-if="ou">
+            <p>Select BU:</p>
+            <div class="row">
+              <div class="col-md-3">
+                <div class="input-group">
+                  <div class="input-group-icon" style="padding: 13px 10px !important;background:{{fsa ? '#0070AD' : '#EEEEEE'}};color:{{fsa ? 'white':'grey'}};" ng-click="getBu('fs')">FS</div>
+                  <div class="input-group-icon" ng-click="getBu('av')" style="background:{{av ? '#0070AD' : ''}};color:{{av ? 'white':'grey'}};">AVI</div>
+                  <div class="input-group-icon" ng-click="getBu('cp')" style="background:{{cp ? '#0070AD' : ''}};color:{{cp ? 'white':'grey'}};">CPR</div>
+                  <div class="input-group-icon" ng-click="getBu('mf')" style="background:{{mf ? '#0070AD' : ''}};color:{{mf ? 'white':'grey'}};">MFG</div>
+                  <div class="input-group-icon" ng-click="getBu('al')" style="background:{{al ? '#0070AD' : ''}};color:{{al ? 'white':'grey'}};">ALS</div>
+                </div>
+              </div>
+              <div class="col-md-3 text-center" style="border-right:2px solid #DCDCDC;">
+                Originator Unit
+                <h4><img src="https://img.icons8.com/nolan/64/collect.png"/ style="height:30px;width:30px;"> {{bbtext}}</h4>
+              </div>
+              <div class="col-md-3 text-center" style="border-right:2px solid #DCDCDC;">
+                Assigned Factor
+                <h4><img src="https://img.icons8.com/nolan/64/hand-with-pen.png"/ style="height:30px;width:30px;"> {{value}}</h4>
+              </div>
+              <div class="col-md-3 text-center">
+                Composite Score
+                <h4><img src="https://img.icons8.com/nolan/64/estimates.png"/ style="height:30px;width:30px;"> {{score}}</h4>
+              </div>
+            </div>
+          </div>
+
+          <div ng-if="st">
+            <p>Select BU:</p>
+            <div class="row">
+              <div class="col-md-3">
+                <div class="input-group">
+                  <div class="input-group-icon" style="padding: 13px 10px !important;background:{{a ? '#0070AD' : ''}};color:{{a ? 'white':'grey'}};" ng-click="getStake('a')" ng-click="getStake('a')">A</div>
+                  <div class="input-group-icon" style="background:{{b ? '#0070AD' : ''}};color:{{b ? 'white':'grey'}};" ng-click="getStake('b')">B</div>
+                  <div class="input-group-icon" style="background:{{c ? '#0070AD' : ''}};color:{{c ? 'white':'grey'}};" ng-click="getStake('c')">C</div>
+                  <div class="input-group-icon" style="background:{{d ? '#0070AD' : ''}};color:{{d ? 'white':'grey'}};" ng-click="getStake('d')">D</div>
+                  <div class="input-group-icon" style="background:{{e ? '#0070AD' : ''}};color:{{e ? 'white':'grey'}};" ng-click="getStake('e')">E</div>
+                  <div class="input-group-icon" style="background:{{f ? '#0070AD' : ''}};color:{{f ? 'white':'grey'}};" ng-click="getStake('f')">F</div>
+                </div>
+              </div>
+              <div class="col-md-3 text-center" style="border-right:2px solid #DCDCDC;">
+                Sponsor / Key Stakeholder
+                <h4><img src="https://img.icons8.com/nolan/64/collect.png"/ style="height:30px;width:30px;"> {{htext}}</h4>
+              </div>
+              <div class="col-md-3 text-center" style="border-right:2px solid #DCDCDC;">
+                Assigned Factor
+                <h4><img src="https://img.icons8.com/nolan/64/hand-with-pen.png"/ style="height:30px;width:30px;"> {{value}}</h4>
+              </div>
+              <div class="col-md-3 text-center">
+                Composite Score
+                <h4><img src="https://img.icons8.com/nolan/64/estimates.png"/ style="height:30px;width:30px;"> {{score}}</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Stakeholder ends -->
+
+        <!-- Feasibility starts -->
+        <div id="menu1" class="tab-pane fade">
+          <div ng-if="fs" class="row" style="margin-top:15px;">
+            <div class="col-md-6">
+              <b>Solution Complexity : {{bcca}}</b>
+            </div>
+            <div class="col-md-1" style="float:right;margin-top:10px;">
+              <button type="button" class="btn btn-success">Save</button>
+            </div>
+            <div class="col-md-1" style="float:right;margin-top:10px;">
+              <button type="button" class="btn btn-default" ng-click="clearAll()">Reset</button>
+            </div>
+          </div>
+          <div ng-if="fs" style="margin-top:15px;">
+            <p>Select Range:</p>
+            <div class="row">
+              <div class="col-md-3">
+                <div class="input-group">
+                  <!-- <div class="input-group-icon" style="padding: 13px 10px !important;background:{{text == 0 ? '#0070AD' : ''}};color:{{text == 0 ? 'white':'grey'}};" ng-click="getRange('0')">0</div> -->
+                  <div class="input-group-icon" style="padding: 13px 10px !important;background:{{text == 1 ? '#0070AD' : ''}};color:{{text == 1 ? 'white':'grey'}};" ng-click="getRange('1')">1</div>
+                  <div class="input-group-icon" style="background:{{text == 2 ? '#0070AD' : ''}};color:{{text == 2 ? 'white':'grey'}};" ng-click="getRange('2')">2</div>
+                  <div class="input-group-icon" style="background:{{text == 3 ? '#0070AD' : ''}};color:{{text == 3 ? 'white':'grey'}};" ng-click="getRange('3')">3</div>
+                  <div class="input-group-icon" style="background:{{text == 4 ? '#0070AD' : ''}};color:{{text == 4 ? 'white':'grey'}};" ng-click="getRange('4')">4</div>
+                  <div class="input-group-icon" style="background:{{text == 5 ? '#0070AD' : ''}};color:{{text == 5 ? 'white':'grey'}};" ng-click="getRange('5')">5</div>
+                </div>
+                <div class="input-group">
+                  <div class="input-group-icon" style="padding: 13px 10px !important;background:{{text == 6 ? '#0070AD' : ''}};color:{{text == 6 ? 'white':'grey'}};" ng-click="getRange('6')">6</div>
+                  <div class="input-group-icon" style="background:{{text == 7 ? '#0070AD' : ''}};color:{{text == 7 ? 'white':'grey'}};" ng-click="getRange('7')">7</div>
+                  <div class="input-group-icon" style="background:{{text == 8 ? '#0070AD' : ''}};color:{{text == 8 ? 'white':'grey'}};" ng-click="getRange('8')">8</div>
+                  <div class="input-group-icon" style="background:{{text == 9 ? '#0070AD' : ''}};color:{{text == 9 ? 'white':'grey'}};" ng-click="getRange('9')">9</div>
+                  <div class="input-group-icon" style="background:{{text == 10 ? '#0070AD' : ''}};color:{{text == 10 ? 'white':'grey'}};" ng-click="getRange('10')">10</div>
+                </div>
+              </div>
+              <div class="col-md-3 text-center" style="border-right:2px solid #DCDCDC;">
+                Solution Complexity
+                <h4><img src="https://img.icons8.com/nolan/64/collect.png"/ style="height:30px;width:30px;"> {{text}}</h4>
+              </div>
+              <div class="col-md-3 text-center" style="border-right:2px solid #DCDCDC;">
+                Assigned Factor
+                <h4><img src="https://img.icons8.com/nolan/64/hand-with-pen.png"/ style="height:30px;width:30px;"> {{value}}</h4>
+              </div>
+              <div class="col-md-3 text-center">
+                Composite Score
+                <h4><img src="https://img.icons8.com/nolan/64/estimates.png"/ style="height:30px;width:30px;"> {{score}}</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Feasibility ends -->
+
+        <!-- Business starts -->
+        <div id="menu2" class="tab-pane fade">
+          <div class="row" ng-if="bs || sc">
+            <div class="col-md-2" style="width:120px !important;" ng-click="getForms('bs')">
+              <h4 style="background:{{bs ? '#0070AD':'#DCDCDC'}};height:40px;width:100px;padding-top:12px;padding-left:10px;border-radius:5px;color:{{bs ? 'white':'black'}}">Benefit
+                <img src="https://img.icons8.com/fluency/48/000000/checked-checkbox.png"/ style="height:20px;width:20px;">
+              </h4>
+            </div>
+            <div class="col-md-3">
+              <h4 ng-click="getForms('sc')" style="background:{{sc ? '#0070AD':'#DCDCDC'}};height:40px;width:210px;padding-top:12px;padding-left:10px;border-radius:5px;color:{{sc ? 'white':'black'}}">Success Confidence <img
+                  src="https://img.icons8.com/fluency/48/000000/checked-checkbox.png"/ style="height:20px;width:20px;"></h4>
+            </div>
+            <div class="col-md-1" style="float:right;margin-top:10px;">
+              <button type="button" class="btn btn-success">Save</button>
+            </div>
+            <div class="col-md-1" style="float:right;margin-top:10px;">
+              <button type="button" class="btn btn-default" ng-click="clearAll()">Reset</button>
+            </div>
+          </div>
+          <div ng-if="bs" style="margin-top:15px;">
+            <p>Select Range:</p>
+            <div class="row">
+              <div class="col-md-3">
+                <div class="input-group">
+                  <div class="input-group-icon" style="padding: 13px 10px !important;background:{{btext == 'High' ? '#0070AD' : ''}};color:{{btext == 'High' ? 'white':'grey'}};" ng-click="getBusiness('h')">High</div>
+                  <div class="input-group-icon" ng-click="getBusiness('mh')" style="background:{{btext == 'Moderately High' ? '#0070AD' : ''}};color:{{btext == 'Moderately High' ? 'white':'grey'}};">Moderately High</div>
+                  <div class="input-group-icon" ng-click="getBusiness('m')" style="background:{{btext == 'Medium' ? '#0070AD' : ''}};color:{{btext == 'Medium' ? 'white':'grey'}};">Medium</div>
+                  <div class="input-group-icon" ng-click="getBusiness('ml')" style="background:{{btext == 'Moderately Low' ? '#0070AD' : ''}};color:{{btext == 'Moderately Low' ? 'white':'grey'}};">Moderately Low</div>
+                  <div class="input-group-icon" ng-click="getBusiness('l')" style="background:{{btext == 'Low' ? '#0070AD' : ''}};color:{{btext == 'Low' ? 'white':'grey'}};">Low</div>
+                </div>
+              </div>
+              <div class="col-md-3 text-center" style="border-right:2px solid #DCDCDC;">
+                Benefit
+                <h4><img src="https://img.icons8.com/nolan/64/collect.png"/ style="height:30px;width:30px;"> {{btext}}</h4>
+              </div>
+              <div class="col-md-3 text-center" style="border-right:2px solid #DCDCDC;">
+                Assigned Factor
+                <h4><img src="https://img.icons8.com/nolan/64/hand-with-pen.png"/ style="height:30px;width:30px;"> {{value}}</h4>
+              </div>
+              <div class="col-md-3 text-center">
+                Composite Score
+                <h4><img src="https://img.icons8.com/nolan/64/estimates.png"/ style="height:30px;width:30px;"> {{score}}</h4>
+              </div>
+            </div>
+          </div>
+          <div ng-if="sc" style="margin-top:15px;">
+            <p>Select Range:</p>
+            <div class="row">
+              <div class="col-md-3">
+                <div class="input-group">
+                  <div class="input-group-icon" style="padding: 13px 10px !important;background:{{btext == 'High' ? '#0070AD' : ''}};color:{{btext == 'High' ? 'white':'grey'}};" ng-click="getBusiness('h')">High</div>
+                  <div class="input-group-icon" ng-click="getBusiness('mh')" style="background:{{btext == 'Moderately High' ? '#0070AD' : ''}};color:{{btext == 'Moderately High' ? 'white':'grey'}};">Moderately High</div>
+                  <div class="input-group-icon" ng-click="getBusiness('m')" style="background:{{btext == 'Medium' ? '#0070AD' : ''}};color:{{btext == 'Medium' ? 'white':'grey'}};">Medium</div>
+                  <div class="input-group-icon" ng-click="getBusiness('ml')" style="background:{{btext == 'Moderately Low' ? '#0070AD' : ''}};color:{{btext == 'Moderately Low' ? 'white':'grey'}};">Moderately Low</div>
+                  <div class="input-group-icon" ng-click="getBusiness('l')" style="background:{{btext == 'Low' ? '#0070AD' : ''}};color:{{btext == 'Low' ? 'white':'grey'}};">Low</div>
+                </div>
+              </div>
+              <div class="col-md-3 text-center" style="border-right:2px solid #DCDCDC;">
+                Success Confidence
+                <h4><img src="https://img.icons8.com/nolan/64/collect.png"/ style="height:30px;width:30px;"> {{btext}}</h4>
+              </div>
+              <div class="col-md-3 text-center" style="border-right:2px solid #DCDCDC;">
+                Assigned Factor
+                <h4><img src="https://img.icons8.com/nolan/64/hand-with-pen.png"/ style="height:30px;width:30px;"> {{value}}</h4>
+              </div>
+              <div class="col-md-3 text-center">
+                Composite Score
+                <h4><img src="https://img.icons8.com/nolan/64/estimates.png"/ style="height:30px;width:30px;"> {{score}}</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Business ends -->
+
+        <nav class="navbar navbar-light navigation" style="margin-top:25px;">
+          <h3 class="text-center heading"><b>BUSINESS CASE COMPLEXITY ASSESSMENT</b></h3>
+        </nav>
+
+        <div class="row">
+          <!-- legend starts -->
+          <div class="col-md-2">
+            <div style="height:50px;width:164px;padding:5px;background:{{bcca > 94 ? 'linear-gradient(to right, #E94057, #F27121)' : '#750000'}};text-align:center;border:{{bcca > 94 ? '5px solid #f12711':'0px solid #ec2F4B'}};margin-top:20px;">
+              <b style="color:{{bcca > 94 ? 'black':'white'}};"> > 95<br>
+                Highly Complex</b>
+            </div>
+
+            <div style="height:50px;width:164px;padding:5px;background:{{bcca <= 94 ? 'linear-gradient(to right, #f12711, #f5af19)' : '#FD7F20'}};text-align:center;border:{{bcca <= 94 ? '5px solid #f5af19':'0px solid #f5af19'}};margin-top:10px;">
+              <b style="color:{{bcca <= 94 ? 'black':'white'}};"> 63 to 94<br>
+                Complex</b>
+            </div>
+
+            <div style="height:45px;width:164px;padding:4px;background:#e9b000;text-align:center;margin-top:10px;">
+              <b style="color:white;"> 31 to 62<br>
+                Medium</b>
+            </div>
+
+            <div style="height:45px;width:164px;padding:4px;background:#237b00;text-align:center;margin-top:10px;">
+              <b style="color:white;"> 0 to 30<br>
+                Simple</b>
+            </div>
+          </div>
+          <!-- legend ends -->
+
+          <!-- gauge starts -->
+          <div class="col-md-6" style="height:250px;">
+            <!-- <div id="myChart" class="chart--container">
+              <h4 class="text-center"><b>Business Case Score : {{bcca}}</b></h4>
+              <div id="myChart-wrapper" class="chWrap">
+              </div>
+            </div> -->
+
+            <div id='myDiv'>
+              <!-- Plotly chart will be drawn inside this DIV -->
+            </div>
+
+          </div>
+          <!-- gauge ends -->
+
+          <!-- Composite starts -->
+          <div class="col-md-2" style="margin-top:45px;float:left;position: relative;right:100px;">
+            <div style="background:#E8EDD9;height:60px;width:180px;padding:20px 5px 20px 12px;">
+              <b style="">Total Composite Score</b>
+            </div>
+            <div style="background:#C9D67E;height:100px;width:180px;padding-top:25px;padding-left:10px;">
+              <div class="row">
+                <div class="col-md-6">
+                  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 172 172" style=" fill:#000000;">
+                    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none"
+                      font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+                      <path d="M0,172v-172h172v172z" fill="none"></path>
+                      <g fill="#8a9353">
+                        <path
+                          d="M18.8125,21.5c-4.44067,0 -8.0625,3.62183 -8.0625,8.0625v112.875c0,4.44067 3.62183,8.0625 8.0625,8.0625h134.375c4.44067,0 8.0625,-3.62183 8.0625,-8.0625v-112.875c0,-4.44067 -3.62183,-8.0625 -8.0625,-8.0625zM18.8125,26.875h134.375c1.48022,0 2.6875,1.20728 2.6875,2.6875v112.875c0,1.48022 -1.20728,2.6875 -2.6875,2.6875h-134.375c-1.48022,0 -2.6875,-1.20728 -2.6875,-2.6875v-112.875c0,-1.48022 1.20728,-2.6875 2.6875,-2.6875zM137.0625,53.75c-0.68237,0 -1.37524,0.26245 -1.90015,0.78735l-8.84985,8.84985l-3.47485,-3.47485c-1.0498,-1.0498 -2.75049,-1.0498 -3.80029,0c-1.0498,1.0498 -1.0498,2.75049 0,3.80029l5.375,5.375c0.5249,0.5249 1.20728,0.78735 1.90015,0.78735c0.69287,0 1.37524,-0.26245 1.90015,-0.78735l10.75,-10.75c1.0498,-1.0498 1.0498,-2.75049 0,-3.80029c-0.5249,-0.5249 -1.21777,-0.78735 -1.90015,-0.78735zM34.9375,59.125c-1.49072,0 -2.6875,1.20728 -2.6875,2.6875c0,1.48022 1.19678,2.6875 2.6875,2.6875h48.375c1.49072,0 2.6875,-1.20728 2.6875,-2.6875c0,-1.48022 -1.19678,-2.6875 -2.6875,-2.6875zM94.0625,59.125c-1.49072,0 -2.6875,1.20728 -2.6875,2.6875c0,1.48022 1.19678,2.6875 2.6875,2.6875h10.75c1.49072,0 2.6875,-1.20728 2.6875,-2.6875c0,-1.48022 -1.19678,-2.6875 -2.6875,-2.6875zM137.0625,75.25c-0.68237,0 -1.37524,0.26245 -1.90015,0.78735l-8.84985,8.84985l-3.47485,-3.47485c-1.0498,-1.0498 -2.75049,-1.0498 -3.80029,0c-1.0498,1.0498 -1.0498,2.75049 0,3.80029l5.375,5.375c0.5249,0.5249 1.20728,0.78735 1.90015,0.78735c0.69287,0 1.37524,-0.26245 1.90015,-0.78735l10.75,-10.75c1.0498,-1.0498 1.0498,-2.75049 0,-3.80029c-0.5249,-0.5249 -1.21777,-0.78735 -1.90015,-0.78735zM34.9375,80.625c-1.49072,0 -2.6875,1.20728 -2.6875,2.6875c0,1.48022 1.19678,2.6875 2.6875,2.6875h69.875c1.49072,0 2.6875,-1.20728 2.6875,-2.6875c0,-1.48022 -1.19678,-2.6875 -2.6875,-2.6875zM137.0625,96.75c-0.68237,0 -1.37524,0.26245 -1.90015,0.78735l-8.84985,8.84985l-3.47485,-3.47485c-1.0498,-1.0498 -2.75049,-1.0498 -3.80029,0c-1.0498,1.0498 -1.0498,2.75049 0,3.80029l5.375,5.375c0.5249,0.5249 1.20728,0.78735 1.90015,0.78735c0.69287,0 1.37524,-0.26245 1.90015,-0.78735l10.75,-10.75c1.0498,-1.0498 1.0498,-2.75049 0,-3.80029c-0.5249,-0.5249 -1.21777,-0.78735 -1.90015,-0.78735zM34.9375,102.125c-1.49072,0 -2.6875,1.20728 -2.6875,2.6875c0,1.48022 1.19678,2.6875 2.6875,2.6875h26.875c1.49072,0 2.6875,-1.20728 2.6875,-2.6875c0,-1.48022 -1.19678,-2.6875 -2.6875,-2.6875zM72.5625,102.125c-1.49072,0 -2.6875,1.20728 -2.6875,2.6875c0,1.48022 1.19678,2.6875 2.6875,2.6875h32.25c1.49072,0 2.6875,-1.20728 2.6875,-2.6875c0,-1.48022 -1.19678,-2.6875 -2.6875,-2.6875zM26.875,129c-1.49072,0 -2.6875,1.20728 -2.6875,2.6875v5.375c0,1.48022 1.19678,2.6875 2.6875,2.6875c1.49072,0 2.6875,-1.20728 2.6875,-2.6875v-5.375c0,-1.48022 -1.19678,-2.6875 -2.6875,-2.6875zM40.3125,129c-1.49072,0 -2.6875,1.20728 -2.6875,2.6875v5.375c0,1.48022 1.19678,2.6875 2.6875,2.6875c1.49072,0 2.6875,-1.20728 2.6875,-2.6875v-5.375c0,-1.48022 -1.19678,-2.6875 -2.6875,-2.6875zM53.75,129c-1.49072,0 -2.6875,1.20728 -2.6875,2.6875v5.375c0,1.48022 1.19678,2.6875 2.6875,2.6875c1.49072,0 2.6875,-1.20728 2.6875,-2.6875v-5.375c0,-1.48022 -1.19678,-2.6875 -2.6875,-2.6875zM67.1875,129c-1.49072,0 -2.6875,1.20728 -2.6875,2.6875v5.375c0,1.48022 1.19678,2.6875 2.6875,2.6875c1.49072,0 2.6875,-1.20728 2.6875,-2.6875v-5.375c0,-1.48022 -1.19678,-2.6875 -2.6875,-2.6875zM80.625,129c-1.49072,0 -2.6875,1.20728 -2.6875,2.6875v5.375c0,1.48022 1.19678,2.6875 2.6875,2.6875c1.49072,0 2.6875,-1.20728 2.6875,-2.6875v-5.375c0,-1.48022 -1.19678,-2.6875 -2.6875,-2.6875zM94.0625,129c-1.49072,0 -2.6875,1.20728 -2.6875,2.6875v5.375c0,1.48022 1.19678,2.6875 2.6875,2.6875c1.49072,0 2.6875,-1.20728 2.6875,-2.6875v-5.375c0,-1.48022 -1.19678,-2.6875 -2.6875,-2.6875zM107.5,129c-1.49072,0 -2.6875,1.20728 -2.6875,2.6875v5.375c0,1.48022 1.19678,2.6875 2.6875,2.6875c1.49072,0 2.6875,-1.20728 2.6875,-2.6875v-5.375c0,-1.48022 -1.19678,-2.6875 -2.6875,-2.6875zM120.9375,129c-1.49072,0 -2.6875,1.20728 -2.6875,2.6875v5.375c0,1.48022 1.19678,2.6875 2.6875,2.6875c1.49072,0 2.6875,-1.20728 2.6875,-2.6875v-5.375c0,-1.48022 -1.19678,-2.6875 -2.6875,-2.6875zM134.375,129c-1.49072,0 -2.6875,1.20728 -2.6875,2.6875v5.375c0,1.48022 1.19678,2.6875 2.6875,2.6875c1.49072,0 2.6875,-1.20728 2.6875,-2.6875v-5.375c0,-1.48022 -1.19678,-2.6875 -2.6875,-2.6875zM147.8125,129c-1.49072,0 -2.6875,1.20728 -2.6875,2.6875v5.375c0,1.48022 1.19678,2.6875 2.6875,2.6875c1.49072,0 2.6875,-1.20728 2.6875,-2.6875v-5.375c0,-1.48022 -1.19678,-2.6875 -2.6875,-2.6875z">
+                        </path>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <div class="col-md-6">
+                  <h2 style="color:white;margin-top:10px !important;"><b>{{cscore}}</b></h2>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Composite ends -->
+
+          <!-- priority starts -->
+          <div class="col-md-2" style="margin-top:45px;">
+            <div style="background:#DDEEE4;height:60px;width:175px;padding:20px 5px 20px 45px;">
+              <b style="">Priority Rank</b>
+            </div>
+            <div style="background:#00CCA1;height:100px;width:175px;padding-top:25px;padding-left:10px;">
+              <div class="row">
+                <div class="col-md-6">
+                  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 172 172" style=" fill:#000000;">
+                    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none"
+                      font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+                      <path d="M0,172v-172h172v172z" fill="none"></path>
+                      <g fill="#079f7e">
+                        <path
+                          d="M86.20156,6.4668c-2.77988,-0.0084 -5.55976,1.03301 -7.67617,3.14101l-68.88399,68.53125c-4.22441,4.19922 -4.24121,11.10274 -0.03359,15.33555l68.53125,68.88398c4.19922,4.22441 11.10274,4.24121 15.33555,0.03359l68.88398,-68.53125c4.22441,-4.20762 4.24121,-11.10273 0.03359,-15.33555l-68.53125,-68.88399c-2.09961,-2.10801 -4.87109,-3.17461 -7.65937,-3.17461zM86.19316,10.7332c1.67129,0.0084 3.34258,0.65508 4.61914,1.94844l68.53125,68.87559c2.56992,2.57832 2.55312,6.69355 -0.02519,9.26348l-68.87559,68.52285c-2.57832,2.56992 -6.69355,2.56153 -9.25508,-0.0168l-68.53125,-68.88399c-2.56992,-2.57832 -2.56152,-6.69355 0.0252,-9.25508l68.87559,-68.53125c1.29336,-1.28496 2.96465,-1.93164 4.63594,-1.92324zM86.15957,25.8c-1.19258,0 -2.15,0.95742 -2.1584,2.15c0,0.5627 0.22676,1.11699 0.62148,1.52012c0.40313,0.40312 0.95742,0.62988 1.52012,0.62988c1.19258,0.0084 2.1584,-0.95742 2.1584,-2.1416c0,-1.18418 -0.95742,-2.15 -2.1416,-2.1584zM79.68438,32.2332c-1.18418,0 -2.15,0.95742 -2.15,2.1416c0,1.19258 0.95742,2.15 2.1416,2.1584c0.57109,0 1.11699,-0.22676 1.52012,-0.62149c0.41152,-0.40313 0.63828,-0.95742 0.63828,-1.52012c0,-1.19258 -0.95742,-2.1584 -2.15,-2.1584zM92.59277,32.2668c-1.18418,0 -2.15,0.95742 -2.1584,2.1416c0,1.19258 0.95742,2.15 2.15,2.1584c0.5627,0 1.11699,-0.22676 1.52012,-0.62149c0.40313,-0.40313 0.62988,-0.95742 0.62988,-1.52012c0.0084,-1.19258 -0.95742,-2.1584 -2.1416,-2.1584zM73.22598,38.66641c-1.18418,0 -2.15,0.95742 -2.15,2.15c-0.0084,1.18418 0.94902,2.1416 2.1332,2.15c1.19258,0.0084 2.1584,-0.95742 2.1668,-2.1416c0,-0.57109 -0.22676,-1.11699 -0.62988,-1.52012c-0.40313,-0.41152 -0.94902,-0.63828 -1.52012,-0.63828zM99.02598,38.73359c-1.19258,0 -2.1584,0.95742 -2.1584,2.15c0,1.18418 0.95742,2.15 2.1416,2.15c1.19258,0 2.15,-0.95742 2.1584,-2.1416c0,-0.57109 -0.22676,-1.11699 -0.62149,-1.52012c-0.40313,-0.41152 -0.95742,-0.63828 -1.52012,-0.63828zM66.75078,45.10801c-1.18418,-0.0084 -2.1416,0.94902 -2.15,2.1332c0,0.57109 0.22676,1.12539 0.62149,1.52852c0.40313,0.40313 0.95742,0.62988 1.52851,0.63828c1.18418,0 2.15,-0.96582 2.15,-2.15c0,-1.18418 -0.95742,-2.15 -2.15,-2.15zM105.45078,45.20039c-1.18418,0 -2.15,0.95742 -2.15,2.1416c0,1.19258 0.95742,2.1584 2.15,2.1584c1.18418,0 2.1416,-0.95742 2.15,-2.1416c0,-0.57109 -0.22676,-1.11699 -0.62148,-1.52012c-0.40313,-0.41153 -0.95742,-0.63828 -1.52852,-0.63828zM60.29238,51.53281c-1.19258,0 -2.1584,0.96582 -2.1584,2.15c0,1.18418 0.95742,2.15 2.1416,2.15c1.19258,0.0084 2.1584,-0.95742 2.1584,-2.1416c0,-1.18418 -0.95742,-2.15 -2.1416,-2.1584zM111.89238,51.66719c-1.18418,0 -2.15,0.95742 -2.15,2.15c-0.0084,1.18418 0.95742,2.15 2.1416,2.15c1.18418,0 2.15,-0.95742 2.1584,-2.15c0,-1.18418 -0.96582,-2.15 -2.15,-2.15zM53.82559,57.97441c-1.18418,-0.0084 -2.15,0.94902 -2.1584,2.1332c0,0.57109 0.22676,1.12539 0.62149,1.52852c0.40313,0.40313 0.95742,0.62988 1.52851,0.63828c1.18418,0 2.15,-0.96582 2.15,-2.15c0,-1.18418 -0.95742,-2.15 -2.1416,-2.15zM118.32559,58.13399c-1.18418,0 -2.15,0.95742 -2.1584,2.1416c0,1.19258 0.96582,2.1584 2.15,2.1584c1.18418,0 2.15,-0.95742 2.15,-2.1416c0.0084,-1.19258 -0.95742,-2.1584 -2.1416,-2.1584zM47.35879,64.39922c-0.57109,0 -1.11699,0.22676 -1.52012,0.62988c-0.41153,0.40312 -0.63828,0.94902 -0.63828,1.52012c0,1.18418 0.95742,2.15 2.1416,2.15c1.19258,0.0084 2.1584,-0.95742 2.1584,-2.1416c0,-1.18418 -0.95742,-2.15 -2.1416,-2.1584zM124.75879,64.60078c-0.57109,0 -1.11699,0.22676 -1.52012,0.62149c-0.41153,0.40313 -0.63828,0.95742 -0.63828,1.52851c0,1.18418 0.95742,2.15 2.1416,2.15c1.19258,0 2.1584,-0.95742 2.1584,-2.15c0,-1.18418 -0.95742,-2.1416 -2.1416,-2.15zM40.89199,70.84082c-0.57109,-0.0084 -1.11699,0.21836 -1.52012,0.62148c-0.41152,0.40313 -0.63828,0.94903 -0.63828,1.52012c0,1.18418 0.95742,2.15 2.15,2.1584c1.18418,0 2.15,-0.96582 2.15,-2.15c0,-1.18418 -0.95742,-2.15 -2.1416,-2.15zM131.19199,71.06758c-0.56269,0 -1.11699,0.22676 -1.52012,0.62148c-0.40313,0.40313 -0.62988,0.95742 -0.63828,1.52012c0,1.19258 0.96582,2.1584 2.15,2.1584c1.18418,0 2.15,-0.95742 2.15,-2.1416c0.0084,-1.19258 -0.94902,-2.15 -2.1416,-2.1584zM34.4252,77.26563c-1.19258,0 -2.1584,0.96582 -2.1584,2.15c0,1.18418 0.95742,2.15 2.1416,2.15c1.19258,0.0084 2.15,-0.94902 2.1584,-2.1416c0,-0.56269 -0.22676,-1.11699 -0.62149,-1.52012c-0.40313,-0.40312 -0.95742,-0.62988 -1.52012,-0.63828zM60.2252,77.4c-4.72832,-0.0084 -8.6084,3.85488 -8.6252,8.5748c-0.0084,4.72832 3.85488,8.6168 8.5748,8.6252c4.72832,0.0168 8.6168,-3.84648 8.6252,-8.5748c0.0168,-4.72832 -3.84648,-8.6084 -8.5748,-8.6252zM86.0252,77.4c-4.72832,-0.0084 -8.6084,3.85488 -8.6252,8.5748c-0.0084,4.72832 3.85488,8.6168 8.5748,8.6252c4.72832,0.0168 8.6168,-3.84648 8.6252,-8.5748c0.0168,-4.72832 -3.84648,-8.6084 -8.5748,-8.6252zM111.8252,77.4c-4.72832,-0.0084 -8.6084,3.85488 -8.6252,8.5748c-0.0084,4.72832 3.85488,8.6168 8.5748,8.6252c4.72832,0.0168 8.6168,-3.84648 8.6252,-8.5748c0.0168,-4.72832 -3.84648,-8.6084 -8.5748,-8.6252zM137.63359,77.53438c-1.19258,0 -2.1584,0.95742 -2.1584,2.15c0,1.18418 0.95742,2.1416 2.1416,2.15c1.18418,0.0084 2.15,-0.95742 2.1584,-2.1416c0,-0.57109 -0.22676,-1.11699 -0.62149,-1.52012c-0.40312,-0.41152 -0.95742,-0.63828 -1.52012,-0.63828zM60.2084,81.7c2.40195,0.0084 4.3,1.91484 4.2916,4.3084c0,2.40195 -1.90645,4.3 -4.3084,4.2916c-2.40195,0 -4.2916,-1.90645 -4.2916,-4.3084c0.0084,-2.40195 1.91484,-4.2916 4.3084,-4.2916zM86.0084,81.7c2.40195,0.0084 4.3,1.91484 4.2916,4.3084c0,2.40195 -1.90645,4.3 -4.3084,4.2916c-2.40195,0 -4.2916,-1.90645 -4.2916,-4.3084c0.0084,-2.40195 1.91484,-4.2916 4.3084,-4.2916zM111.8084,81.7c2.40195,0.0084 4.3,1.91484 4.2916,4.3084c0,2.40195 -1.90645,4.3 -4.3084,4.2916c-2.40195,0 -4.2916,-1.90645 -4.2916,-4.3084c0.0084,-2.40195 1.91484,-4.2916 4.3084,-4.2916zM27.9584,83.70723c-1.18418,-0.0084 -2.15,0.95742 -2.1584,2.1416c0,1.18418 0.95742,2.15 2.15,2.1584c1.18418,0 2.15,-0.95742 2.15,-2.1416c0.0084,-0.57109 -0.21836,-1.12539 -0.62148,-1.52851c-0.40312,-0.40313 -0.94903,-0.62988 -1.52012,-0.62988zM144.0584,84.00117c-1.18418,0 -2.15,0.95742 -2.1584,2.1416c0,1.19258 0.95742,2.15 2.15,2.1584c0.5627,0 1.11699,-0.22676 1.52012,-0.62149c0.40313,-0.40313 0.62988,-0.95742 0.62988,-1.52012c0.0084,-1.19258 -0.95742,-2.1584 -2.1416,-2.1584zM34.3916,90.16563c-1.19258,0 -2.1584,0.96582 -2.1584,2.15c0,1.18418 0.95742,2.15 2.1416,2.15c1.19258,0.0084 2.15,-0.94902 2.1584,-2.1416c0,-0.56269 -0.22676,-1.11699 -0.62149,-1.52012c-0.40313,-0.40313 -0.95742,-0.62988 -1.52012,-0.63828zM137.6,90.43438c-0.57109,0 -1.12539,0.22676 -1.52851,0.62149c-0.40312,0.40313 -0.62988,0.95742 -0.62988,1.52851c-0.0084,1.18418 0.95742,2.15 2.1416,2.15c1.18418,0 2.15,-0.95742 2.1584,-2.1416c0,-1.18418 -0.95742,-2.15 -2.1416,-2.1584zM40.8248,96.64082c-1.18418,-0.0084 -2.15,0.95742 -2.1584,2.1416c0,1.18418 0.95742,2.15 2.15,2.1584c0.5627,0 1.11699,-0.22676 1.52012,-0.62988c0.40313,-0.40313 0.62988,-0.94902 0.62988,-1.52012c0.0084,-1.18418 -0.95742,-2.15 -2.1416,-2.15zM131.1248,96.86758c-1.18418,0 -2.15,0.95742 -2.1584,2.1416c0,1.19258 0.95742,2.15 2.15,2.1584c0.5627,0 1.11699,-0.22676 1.52012,-0.62149c0.40313,-0.40313 0.62988,-0.95742 0.62988,-1.52012c0.0084,-1.19258 -0.95742,-2.1584 -2.1416,-2.1584zM47.25801,103.09922c-1.18418,0 -2.15,0.96582 -2.15,2.15c-0.0084,1.18418 0.94902,2.15 2.1332,2.15c0.57109,0.0084 1.12539,-0.21836 1.52852,-0.62148c0.40313,-0.40313 0.62988,-0.94903 0.63828,-1.52012c0,-1.18418 -0.96582,-2.15 -2.15,-2.1584zM124.65801,103.30078c-1.18418,0 -2.15,0.95742 -2.15,2.15c-0.0084,1.18418 0.94902,2.1416 2.1332,2.15c0.57109,0 1.12539,-0.22676 1.52852,-0.62148c0.40313,-0.40313 0.62988,-0.95742 0.63828,-1.52852c0,-1.18418 -0.96582,-2.15 -2.15,-2.15zM53.68281,109.57441c-1.18418,-0.0084 -2.15,0.95742 -2.15,2.1416c0,1.18418 0.95742,2.15 2.15,2.1584c1.18418,0 2.15,-0.96582 2.15,-2.15c0,-1.18418 -0.95742,-2.15 -2.15,-2.15zM118.19121,109.73399c-1.18418,0 -2.15,0.95742 -2.1584,2.1416c0,1.19258 0.96582,2.1584 2.15,2.1584c1.18418,0 2.15,-0.95742 2.15,-2.1416c0.0084,-1.19258 -0.95742,-2.1584 -2.1416,-2.1584zM60.12441,116.04121c-1.18418,0 -2.15,0.95742 -2.15,2.1416c-0.0084,1.18418 0.94902,2.15 2.1332,2.1584c0.57109,0 1.12539,-0.22676 1.52852,-0.62148c0.40313,-0.40313 0.62988,-0.95742 0.63828,-1.52852c0,-1.18418 -0.96582,-2.15 -2.15,-2.15zM111.73281,116.16719c-1.19258,0 -2.1584,0.95742 -2.1584,2.15c0,1.18418 0.95742,2.1416 2.1416,2.15c1.18418,0.0084 2.15,-0.95742 2.1584,-2.1416c0,-0.57109 -0.22676,-1.11699 -0.62149,-1.52012c-0.40313,-0.41152 -0.95742,-0.63828 -1.52012,-0.63828zM66.55762,122.50801c-1.18418,-0.0084 -2.15,0.94902 -2.1584,2.1332c0,0.57109 0.22676,1.12539 0.62988,1.52852c0.40312,0.40313 0.94902,0.62988 1.52012,0.63828c1.18418,0 2.15,-0.96582 2.15,-2.15c0.0084,-1.18418 -0.95742,-2.15 -2.1416,-2.15zM105.25762,122.60039c-1.18418,0 -2.15,0.95742 -2.1584,2.1416c0,1.19258 0.96582,2.1584 2.15,2.1584c1.18418,0 2.15,-0.95742 2.15,-2.1416c0.0084,-0.57109 -0.21836,-1.11699 -0.62148,-1.52012c-0.40313,-0.41153 -0.94903,-0.63828 -1.52012,-0.63828zM72.99922,128.96641c-0.57109,0 -1.12539,0.22676 -1.52851,0.62988c-0.40313,0.40312 -0.62988,0.94902 -0.62988,1.52012c-0.0084,1.18418 0.95742,2.15 2.1416,2.15c1.18418,0.0084 2.15,-0.94902 2.1584,-2.1416c0,-1.18418 -0.95742,-2.15 -2.1416,-2.1584zM98.79922,129.03359c-1.19258,0 -2.1584,0.95742 -2.1584,2.15c-0.0084,0.5627 0.21836,1.11699 0.62148,1.52012c0.40313,0.40312 0.94903,0.62988 1.52012,0.62988c1.18418,0.0084 2.15,-0.95742 2.1584,-2.1416c0,-1.18418 -0.95742,-2.15 -2.1416,-2.1584zM79.42402,135.4416c-0.56269,-0.0084 -1.11699,0.21836 -1.52012,0.62148c-0.40312,0.40312 -0.62988,0.94903 -0.63828,1.52012c0,1.18418 0.96582,2.15 2.15,2.1584c1.18418,0 2.15,-0.96582 2.15,-2.15c0.0084,-1.18418 -0.94902,-2.15 -2.1416,-2.15zM92.32402,135.4752c-0.56269,-0.0084 -1.11699,0.21836 -1.52012,0.62148c-0.40313,0.40312 -0.62988,0.94903 -0.63828,1.52012c0,1.18418 0.96582,2.15 2.15,2.1584c1.18418,0 2.15,-0.96582 2.15,-2.15c0.0084,-1.18418 -0.94902,-2.15 -2.1416,-2.15zM85.86563,141.9c-1.19258,0 -2.1584,0.95742 -2.1584,2.15c-0.0084,0.5627 0.21836,1.11699 0.62148,1.52012c0.40313,0.40313 0.94903,0.62988 1.52012,0.62988c1.18418,0.0084 2.15,-0.95742 2.1584,-2.1416c0,-1.18418 -0.95742,-2.15 -2.1416,-2.1584z">
+                        </path>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <div class="col-md-6">
+                  <h2 style="color:white;margin-top:10px !important;"><b>{{rank}}</b></h2>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- priority ends -->
+
+        </div>
+
+        <!-- prioritization title starts -->
+        <nav class="navbar navbar-light navigation">
+          <h3 class="text-center heading"><b>PRIORITIZATION</b></h3>
+        </nav>
+        <!-- prioritization title ends -->
+
+
+        <div class="row">
+          <!-- table starts -->
+          <div class="col-md-9">
+            <!-- heading starts -->
+            <div class="row text-center">
+              <div class="col-md-8">
+                <div class="col-md-2" style="height:30px;margin-right:8px;">
+                  <h5><b>Rank</b></h5>
+                </div>
+                <div class="col-md-2" style="height:30px;margin-right:8px;">
+                  <h5><b>Case ID</b></h5>
+                </div>
+                <div class="col-md-3" style="height:30px;margin-right:8px;">
+                  <h5><b>Composite Priority Score</b></h5>
+                </div>
+                <div class="col-md-4" style="height:30px;">
+                  <h5><b>Recommendation</b></h5>
+                </div>
+              </div>
+              <div class="col-md-offset-1 col-md-2" style="margin-top:5px;">
+                <b style="text-decoration:underline;" ng-click="viewCase('table')">View Cases</b>
+              </div>
+            </div>
+            <!-- heading ends -->
+
+            <div ng-if="showCase1" class="row text-center" style="margin-top:20px;">
+              <div class="col-md-8">
+
+                <div class="col-md-2"
+                  style="border-bottom:5px solid #746C70; height:50px;margin-right:8px;border-top:1px solid #DCDCDC;border-right:1px solid #DCDCDC;border-left:1px solid #DCDCDC;height:50px;border-radius:10px;box-shadow: 3px 5px #DCDCDC">
+                  <p style="padding:10px;">1</p>
+                </div>
+                <div class="col-md-2"
+                  style="border-bottom:5px solid #0000A3; height:50px;margin-right:8px;border-top:1px solid #DCDCDC;border-right:1px solid #DCDCDC;border-left:1px solid #DCDCDC;height:50px;border-radius:10px;box-shadow: 3px 5px #DCDCDC">
+                  <p style="padding:10px;">1101</p>
+                </div>
+                <div class="col-md-3"
+                  style="border-bottom:5px solid green; height:50px;margin-right:8px;border-top:1px solid #DCDCDC;border-right:1px solid #DCDCDC;border-left:1px solid #DCDCDC;height:50px;border-radius:10px;box-shadow: 3px 5px #DCDCDC">
+                  <p style="padding:10px;" ng-click="viewCase('1')">15.8 <img style="width:15px;height:15px;" src="https://img.icons8.com/material-outlined/24/000000/visible--v1.png" />
+                  </p>
+                </div>
+                <div class="col-md-4" style="border-bottom:5px solid brown;border-top:1px solid #DCDCDC;border-right:1px solid #DCDCDC;border-left:1px solid #DCDCDC;height:50px;border-radius:10px;box-shadow: 3px 5px #DCDCDC">
+                  <p style="padding:10px;">Go</p>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <img style="float:left;height:25px;width:25px;margin-top:12px;" src="https://img.icons8.com/ios/50/000000/pencil--v1.png" />
+                <img style="float:center;height:25px;width:25px;margin-top:12px;" src="https://img.icons8.com/material-outlined/24/000000/trash--v1.png" />
+              </div>
+            </div>
+
+            <div ng-if="showCase2" class="row text-center" style="margin-top:20px;">
+              <div class="col-md-8">
+                <div class="col-md-2"
+                  style="border-bottom:5px solid #746C70; height:50px;margin-right:8px;border-top:1px solid #DCDCDC;border-right:1px solid #DCDCDC;border-left:1px solid #DCDCDC;height:50px;border-radius:10px;box-shadow: 3px 5px #DCDCDC">
+                  <p style="padding:10px;">2</p>
+                </div>
+                <div class="col-md-2"
+                  style="border-bottom:5px solid #0000A3; height:50px;margin-right:8px;border-top:1px solid #DCDCDC;border-right:1px solid #DCDCDC;border-left:1px solid #DCDCDC;height:50px;border-radius:10px;box-shadow: 3px 5px #DCDCDC">
+                  <p style="padding:10px;">1102</p>
+                </div>
+                <div class="col-md-3"
+                  style="border-bottom:5px solid green; height:50px;margin-right:8px;border-top:1px solid #DCDCDC;border-right:1px solid #DCDCDC;border-left:1px solid #DCDCDC;height:50px;border-radius:10px;box-shadow: 3px 5px #DCDCDC">
+                  <p style="padding:10px;" ng-click="viewCase('2')">10.3 <img style="width:15px;height:15px;" src="https://img.icons8.com/material-outlined/24/000000/visible--v1.png" />
+                  </p>
+                </div>
+                <div class="col-md-4" style="border-bottom:5px solid brown;border-top:1px solid #DCDCDC;border-right:1px solid #DCDCDC;border-left:1px solid #DCDCDC;height:50px;border-radius:10px;box-shadow: 3px 5px #DCDCDC">
+                  <p style="padding:10px;">Defer for AI Readiness</p>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <img style="float:left;height:25px;width:25px;margin-top:12px;" src="https://img.icons8.com/ios/50/000000/pencil--v1.png" />
+                <img style="float:center;height:25px;width:25px;margin-top:12px;" src="https://img.icons8.com/material-outlined/24/000000/trash--v1.png" />
+              </div>
+            </div>
+
+            <br>
+            <!-- Case detail starts -->
+
+            <div ng-if="showCase11">
+              <div class="row">
+                <div class="col-md-6">
+                  <b>Stakeholders - Originator Unit</b>
+                </div>
+                <div class="col-md-6">
+                  <b>Stakeholders - Sponsor / Key Stakeholder</b>
+                </div>
+              </div>
+              <div class="row" style="margin-top:5px;">
+                <div class="col-md-6">
+                  <div class="row">
+                    <div class="col-md-4 text-center" style="border-right:2px solid #DCDCDC;">
+                      Originator Unit
+                      <h4><img src="https://img.icons8.com/nolan/64/collect.png"/ style="height:30px;width:30px;"> FS</h4>
+                    </div>
+                    <div class="col-md-4 text-center" style="border-right:2px solid #DCDCDC;">
+                      Assigned Factor
+                      <h4><img src="https://img.icons8.com/nolan/64/hand-with-pen.png"/ style="height:30px;width:30px;"> 1</h4>
+                    </div>
+                    <div class="col-md-4 text-center">
+                      Composite Score
+                      <h4><img src="https://img.icons8.com/nolan/64/estimates.png"/ style="height:30px;width:30px;"> 0.5</h4>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="row">
+                    <div class="col-md-4 text-center" style="border-right:2px solid #DCDCDC;">
+                      Key Stakeholder
+                      <h4><img src="https://img.icons8.com/nolan/64/collect.png"/ style="height:30px;width:30px;"> A</h4>
+                    </div>
+                    <div class="col-md-4 text-center" style="border-right:2px solid #DCDCDC;">
+                      Assigned Factor
+                      <h4><img src="https://img.icons8.com/nolan/64/hand-with-pen.png"/ style="height:30px;width:30px;"> 1</h4>
+                    </div>
+                    <div class="col-md-4 text-center">
+                      Composite Score
+                      <h4><img src="https://img.icons8.com/nolan/64/estimates.png"/ style="height:30px;width:30px;"> 0.5</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <b>Business Returns - Benefit</b>
+                </div>
+                <div class="col-md-6">
+                  <b>Business Returns - Success</b>
+                </div>
+              </div>
+              <div class="row" style="margin-top:5px;">
+                <div class="col-md-6">
+                  <div class="row">
+                    <div class="col-md-4 text-center" style="border-right:2px solid #DCDCDC;">
+                      Benefit
+                      <h4><img src="https://img.icons8.com/nolan/64/collect.png"/ style="height:30px;width:30px;"> High</h4>
+                    </div>
+                    <div class="col-md-4 text-center" style="border-right:2px solid #DCDCDC;">
+                      Assigned Factor
+                      <h4><img src="https://img.icons8.com/nolan/64/hand-with-pen.png"/ style="height:30px;width:30px;"> 5</h4>
+                    </div>
+                    <div class="col-md-4 text-center">
+                      Composite Score
+                      <h4><img src="https://img.icons8.com/nolan/64/estimates.png"/ style="height:30px;width:30px;"> 10</h4>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="row">
+                    <div class="col-md-4 text-center" style="border-right:2px solid #DCDCDC;">
+                      Success
+                      <h4><img src="https://img.icons8.com/nolan/64/collect.png"/ style="height:30px;width:30px;"> High</h4>
+                    </div>
+                    <div class="col-md-4 text-center" style="border-right:2px solid #DCDCDC;">
+                      Assigned Factor
+                      <h4><img src="https://img.icons8.com/nolan/64/hand-with-pen.png"/ style="height:30px;width:30px;"> 5</h4>
+                    </div>
+                    <div class="col-md-4 text-center">
+                      Composite Score
+                      <h4><img src="https://img.icons8.com/nolan/64/estimates.png"/ style="height:30px;width:30px;"> 10</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+                        <div ng-if="showCase22">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <b>Stakeholders - Originator Unit</b>
+                            </div>
+                            <div class="col-md-6">
+                              <b>Stakeholders - Sponsor / Key Stakeholder</b>
+                            </div>
+                          </div>
+                          <div class="row" style="margin-top:5px;">
+                            <div class="col-md-6">
+                              <div class="row">
+                                <div class="col-md-4 text-center" style="border-right:2px solid #DCDCDC;">
+                                  Originator Unit
+                                  <h4><img src="https://img.icons8.com/nolan/64/collect.png"/ style="height:30px;width:30px;"> FS</h4>
+                                </div>
+                                <div class="col-md-4 text-center" style="border-right:2px solid #DCDCDC;">
+                                  Assigned Factor
+                                  <h4><img src="https://img.icons8.com/nolan/64/hand-with-pen.png"/ style="height:30px;width:30px;"> 1</h4>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                  Composite Score
+                                  <h4><img src="https://img.icons8.com/nolan/64/estimates.png"/ style="height:30px;width:30px;"> 0.5</h4>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="row">
+                                <div class="col-md-4 text-center" style="border-right:2px solid #DCDCDC;">
+                                  Key Stakeholder
+                                  <h4><img src="https://img.icons8.com/nolan/64/collect.png"/ style="height:30px;width:30px;"> A</h4>
+                                </div>
+                                <div class="col-md-4 text-center" style="border-right:2px solid #DCDCDC;">
+                                  Assigned Factor
+                                  <h4><img src="https://img.icons8.com/nolan/64/hand-with-pen.png"/ style="height:30px;width:30px;"> 1</h4>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                  Composite Score
+                                  <h4><img src="https://img.icons8.com/nolan/64/estimates.png"/ style="height:30px;width:30px;"> 0.5</h4>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="row">
+                            <div class="col-md-6">
+                              <b>Business Returns - Benefit</b>
+                            </div>
+                            <div class="col-md-6">
+                              <b>Business Returns - Success</b>
+                            </div>
+                          </div>
+                          <div class="row" style="margin-top:5px;">
+                            <div class="col-md-6">
+                              <div class="row">
+                                <div class="col-md-4 text-center" style="border-right:2px solid #DCDCDC;">
+                                  Benefit
+                                  <h4><img src="https://img.icons8.com/nolan/64/collect.png"/ style="height:30px;width:30px;"> High</h4>
+                                </div>
+                                <div class="col-md-4 text-center" style="border-right:2px solid #DCDCDC;">
+                                  Assigned Factor
+                                  <h4><img src="https://img.icons8.com/nolan/64/hand-with-pen.png"/ style="height:30px;width:30px;"> 5</h4>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                  Composite Score
+                                  <h4><img src="https://img.icons8.com/nolan/64/estimates.png"/ style="height:30px;width:30px;"> 10</h4>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="row">
+                                <div class="col-md-4 text-center" style="border-right:2px solid #DCDCDC;">
+                                  Success
+                                  <h4><img src="https://img.icons8.com/nolan/64/collect.png"/ style="height:30px;width:30px;"> High</h4>
+                                </div>
+                                <div class="col-md-4 text-center" style="border-right:2px solid #DCDCDC;">
+                                  Assigned Factor
+                                  <h4><img src="https://img.icons8.com/nolan/64/hand-with-pen.png"/ style="height:30px;width:30px;"> 5</h4>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                  Composite Score
+                                  <h4><img src="https://img.icons8.com/nolan/64/estimates.png"/ style="height:30px;width:30px;"> 10</h4>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+            <!-- Case detail ends -->
+
+
+          </div>
+          <!-- table ends -->
+
+          <!-- bubble chart starts -->
+          <div class="col-md-3">
+            <div id="chartContainer" style="height: 270px; width: 295px;"></div>
+          </div>
+          <!-- bubble chart ends -->
+
+        </div>
+      </div>
+      <!-- AI Maturity Ends -->
+
+
+
+
+
+    </div>
+  </div>
+  </div>
+  {% endverbatim %}
+
+
+</body>
+
+</html>
